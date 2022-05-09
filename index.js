@@ -17,17 +17,25 @@ const verifyJWT = (req, res, next) => {
     if (!authHeaders) {
         return res.status(401).send({ message: 'unauthorized' })
     }
-    const decoded = authHeaders.split(' ')[1]
-    console.log(decoded);
-
+    const token = authHeaders.split(' ')[1]
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(403).send({ message: 'forbidden' })
+        }
+        req.decoded = decoded;
+        next();
+    });
 }
 
 app.post('/login', (req, res) => {
     const user = req.body;
     console.log(user);
     if (user.email === 'mdmehedihasan384@gmail.com' && user.password === '123456') {
-        const token = jwt.sign({ email: user.email }, process.env.ACCESS_TOKEN_SECRET, {
-            expiresIn: '1d'
+        const token = jwt.sign({
+            email: user.email
+        },
+            process.env.ACCESS_TOKEN_SECRET, {
+            expiresIn: '5s'
         });
         res.send({
             success: true,
