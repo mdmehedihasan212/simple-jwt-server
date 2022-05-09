@@ -12,6 +12,16 @@ app.get('/', (req, res) => {
     res.send('Simple JWT Explore!')
 })
 
+const verifyJWT = (req, res, next) => {
+    const authHeaders = req.headers.authorization;
+    if (!authHeaders) {
+        return res.status(401).send({ message: 'unauthorized' })
+    }
+    const decoded = authHeaders.split(' ')[1]
+    console.log(decoded);
+
+}
+
 app.post('/login', (req, res) => {
     const user = req.body;
     console.log(user);
@@ -27,6 +37,11 @@ app.post('/login', (req, res) => {
     else {
         res.send({ success: false })
     }
+})
+
+app.get('/orders', verifyJWT, (req, res) => {
+
+    res.send([{ id: 1, order: 'sunglass' }, { id: 2, order: 'watch' }])
 })
 
 app.listen(port, () => {
