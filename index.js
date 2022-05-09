@@ -13,7 +13,20 @@ app.get('/', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-    res.send({ success: true })
+    const user = req.body;
+    console.log(user);
+    if (user.email === 'mdmehedihasan384@gmail.com' && user.password === '123456') {
+        const token = jwt.sign({ email: user.email }, process.env.ACCESS_TOKEN_SECRET, {
+            expiresIn: '1d'
+        });
+        res.send({
+            success: true,
+            token: token
+        })
+    }
+    else {
+        res.send({ success: false })
+    }
 })
 
 app.listen(port, () => {
